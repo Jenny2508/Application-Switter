@@ -1,0 +1,14 @@
+{
+  "version": 3,
+  "file": "bundle.css",
+  "sources": [
+    "..\\src\\App.svelte",
+    "..\\src\\Message.svelte"
+  ],
+  "sourcesContent": [
+    "<script>\n  import Message from \"./Message.svelte\";\n  export let name;\n  let message = \"\";\n\tlet messages = [];\n\tlet isVisible = true;\n\n  function addMessage(event) {\n    console.log(event);\n    messages = [event.detail, ...messages];\n  }\n\n  const options = {\n    weekday: \"long\",\n    year: \"numeric\",\n    month: \"long\",\n    day: \"numeric\",\n    hour12: true,\n    hour: \"numeric\",\n    minute: \"2-digit\",\n    second: \"2-digit\"\n\t};\n\t// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat\n\tconst formatter = new Intl.DateTimeFormat(\"en-US\", options);\n\t\n\tfunction toggle() {\n\t\tisVisible = !isVisible;\n\t}\n</script>\n\n<style>\n  .author {\n    font-weight: bold;\n  }\n</style>\n\n<button on:click={toggle}>{isVisible ? 'hide' : 'show'}</button><br>\n{#if isVisible}\n<Message on:message={addMessage} />\n{/if}\n<div>\n  <h2>Messages</h2>\n  {#each messages as message}\n    <div class=\"author\">\n      By {message.author} on {formatter.format(message.date)}\n    </div>\n    <div> {message.text} </div>\n    <hr />\n  {/each}\n</div>\n",
+    "<script>\n  import { createEventDispatcher } from \"svelte\";\n\n  const dispatch = createEventDispatcher();\n\n  let author = \"\";\n  let message = \"\";\n  let maxLength = 24;\n  $: nbCaracters = message.length;\n  $: disabled = message.length > maxLength ? true : false;\n\n  function saveMessage() {\n    const newMessage = {\n      id: Date.now(),\n      text: message,\n      author: author ||'anonymous',\n      date: new Date()\n    };\n    console.log(\"newMessage\", newMessage);\n    dispatch(\"message\", newMessage);\n    message = \"\";\n    author = \"\";\n  }\n</script>\n\n<style>\n  .text {\n    width: 382px;\n  }\n  .alert{\n    color: orangered;\n  }\n\n</style>\n\n<input class=\"text\" type=\"text\" bind:value={author} />\n<br />\n<textarea cols=\"50\" rows=\"5\" bind:value={message} />\n<br />\n<button on:click={saveMessage} disabled={disabled}>send</button>\n<span class:alert={nbCaracters > maxLength}>{nbCaracters}</span>\n{#if disabled}\n  <span class=\"alert\"> (message too long)</span>\n{/if}\n"
+  ],
+  "names": [],
+  "mappings": "AA+BE,OAAO,cAAC,CAAC,AACP,WAAW,CAAE,IAAI,AACnB,CAAC;ACPD,KAAK,eAAC,CAAC,AACL,KAAK,CAAE,KAAK,AACd,CAAC,AACD,qBAAM,CAAC,AACL,KAAK,CAAE,SAAS,AAClB,CAAC"
+}
